@@ -182,9 +182,9 @@ export default function App() {
     }
   };
 
-  if (isInQueue) {
-    return <QueueLanding onQueueComplete={() => setIsInQueue(false)} />;
-  }
+  // if (isInQueue) {
+  //   return <QueueLanding onQueueComplete={() => setIsInQueue(false)} />;
+  // }
 
   return (
     <Router>

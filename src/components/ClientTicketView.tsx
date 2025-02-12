@@ -92,9 +92,9 @@ export function ClientTicketView({ onBookTicket }: ClientTicketViewProps) {
 								</div>
 								<h2 className="text-3xl font-bold mb-2">{concert.artist}</h2>
 								<div className="flex items-center gap-4">
-									<span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm">
+									{/* <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm">
 										{concert.totalTickets} total tickets
-									</span>
+									</span> */}
 									<span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm">
 										Status: {concert.availability}
 									</span>
@@ -104,6 +104,10 @@ export function ClientTicketView({ onBookTicket }: ClientTicketViewProps) {
 									>
 										View Details
 									</button>
+                  <button
+										onClick={() => navigate(`/purchase-ticket/${concert.concertId}`)}
+										className="px-4 py-1 bg-indigo-600 rounded-full text-sm font-medium hover:bg-indigo-700 transform hover:scale-105 transition-all duration-300"
+									></button>
 								</div>
 							</div>
 						</div>
