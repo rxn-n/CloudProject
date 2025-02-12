@@ -69,7 +69,7 @@ export function ClientTicketView({ onBookTicket }: ClientTicketViewProps) {
 	const fetchTicketCategories = async (concertId: string) => {
 		try {
 			const response = await fetch(
-				`https://yuy4vf3t62.execute-api.us-east-1.amazonaws.com/default/getTicketDetailsLambda`
+				`https://mzc9mihhb6.execute-api.us-east-1.amazonaws.com/default/getTicketDetailsLambda`
 			);
 			if (!response.ok) {
 				throw new Error("Failed to fetch ticket categories");
