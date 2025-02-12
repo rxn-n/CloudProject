@@ -104,10 +104,17 @@ export function ClientTicketView({ onBookTicket }: ClientTicketViewProps) {
 									>
 										View Details
 									</button>
-                  <button
-										onClick={() => navigate(`/purchase-ticket/${concert.concertId}`)}
-										className="px-4 py-1 bg-indigo-600 rounded-full text-sm font-medium hover:bg-indigo-700 transform hover:scale-105 transition-all duration-300"
-									></button>
+									{concert.availability !== "Sold Out" && (
+										<button
+											onClick={() =>
+												navigate(`/purchase-ticket/${concert.concertId}`)
+											}
+											className="px-4 py-1 bg-indigo-600 rounded-full text-sm font-medium hover:bg-indigo-700 
+               transform hover:scale-105 transition-all duration-300 ml-auto flex"
+										>
+											Buy Tickets
+										</button>
+									)}
 								</div>
 							</div>
 						</div>
