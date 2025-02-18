@@ -56,10 +56,6 @@ export function BookingPage() {
         setError("Concert details not found.");
         return;
       }
-
-      if (!response.ok) {
-        throw new Error('Failed to update ticket quantity');
-      }
   
       // Handle success (e.g., show a success message or redirect to another page)
       alert('Tickets booked successfully!');

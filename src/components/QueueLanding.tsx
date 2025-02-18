@@ -105,7 +105,7 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
               </div>
 
               {/* Stats grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
                 <div className="bg-gray-50 rounded-xl p-6 text-center transform transition-all hover:scale-105">
                   <Users className="w-6 h-6 text-indigo-600 mx-auto mb-3" />
                   <p className="text-sm text-gray-600 mb-1">Your position</p>
