@@ -10,128 +10,6 @@ import type { Ticket, TicketGroup } from './types';
 import { LayoutGrid } from 'lucide-react';
 
 export default function App() {
-  const [isAdminView, setIsAdminView] = React.useState(false);
-  const [isInQueue, setIsInQueue] = React.useState(true);
-  const [notifications, setNotifications] = React.useState<Array<{
-    id: string;
-    message: string;
-    timestamp: string;
-    type: 'success' | 'error' | 'info';
-  }>>([]);
-
-  const ticketGroups: TicketGroup[] = React.useMemo(() => {
-    const groups: Record<string, Record<string, Ticket[]>> = {};
-    
-    tickets.forEach((ticket) => {
-      if (!groups[ticket.name]) {
-        groups[ticket.name] = {};
-      }
-      if (!groups[ticket.name][ticket.category]) {
-        groups[ticket.name][ticket.category] = [];
-      }
-      groups[ticket.name][ticket.category].push(ticket);
-    });
-
-    return Object.entries(groups).map(([name, categories]) => ({
-      name,
-      categories: Object.entries(categories).map(([category, tickets]) => ({
-        category,
-        tickets: tickets.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      }))
-    }));
-  }, [tickets]);
-
-  const addNotification = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
-    setNotifications((prev) => [
-      {
-        id: Date.now().toString(),
-        message,
-        timestamp: new Date().toISOString(),
-        type
-      },
-      ...prev.slice(0, 9)
-    ]);
-  };
-
-  const handleUpdateStatus = async (ticketId: string, newStatus: 'available' | 'sold_out') => {
-    try {
-      setTickets((prev) =>
-        prev.map((ticket) =>
-          ticket.id === ticketId ? { ...ticket, status: newStatus } : ticket
-        )
-      );
-
-      addNotification(
-        `Ticket status updated to ${newStatus}`,
-        'success'
-      );
-    } catch (error) {
-      addNotification(
-        'Failed to update ticket status',
-        'error'
-      );
-    }
-  };
-
-  const handleUpdateCategoryStatus = async (
-    name: string,
-    category: string,
-    newStatus: 'available' | 'sold_out'
-  ) => {
-    try {
-      setTickets((prev) =>
-        prev.map((ticket) =>
-          ticket.name === name && ticket.category === category
-            ? { ...ticket, status: newStatus }
-            : ticket
-        )
-      );
-
-      addNotification(
-        `All tickets in ${name} - Category ${category} updated to ${newStatus}`,
-        'success'
-      );
-    } catch (error) {
-      addNotification(
-        `Failed to update ${name} - Category ${category} status`,
-        'error'
-      );
-    }
-  };
-
-  const handleBookTicket = async (ticketId: string, quantity: number = 1) => {
-    try {
-      setTickets((prev) =>
-        prev.map((ticket) => {
-          if (ticket.id === ticketId) {
-            const newQuantity = ticket.quantity - quantity;
-            return {
-              ...ticket,
-              quantity: newQuantity,
-              status: newQuantity <= 0 ? 'sold_out' : 'available'
-            };
-          }
-          return ticket;
-        })
-      );
-
-      addNotification(
-        'Ticket booked successfully! Check your email for confirmation.',
-        'success'
-      );
-    } catch (error) {
-      addNotification(
-        'Failed to book ticket. Please try again.',
-        'error'
-      );
-      throw error;
-    }
-  };
-
-  // if (isInQueue) {
-  //   return <QueueLanding onQueueComplete={() => setIsInQueue(false)} />;
-  // }
-
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100">
@@ -145,12 +23,11 @@ export default function App() {
                 </h1>
               </div>
               <button
-                onClick={() => setIsAdminView(!isAdminView)}
                 className="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600
                   rounded-full hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300
                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg"
               >
-                Switch to {isAdminView ? 'Client' : 'Admin'} View
+                Switch View
               </button>
             </div>
           </div>
@@ -163,28 +40,13 @@ export default function App() {
               element={
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="lg:col-span-2">
-                    {isAdminView ? (
-                      <TicketList
-                        ticketGroups={ticketGroups}
-                        onUpdateStatus={handleUpdateStatus}
-                        onUpdateCategoryStatus={handleUpdateCategoryStatus}
-                      />
-                    ) : (
-                      <ClientTicketView
-                        ticketGroups={ticketGroups}
-                        onBookTicket={handleBookTicket}
-                      />
-                    )}
+                    <TicketList />
                   </div>
                   <div>
-                    <NotificationLog notifications={notifications} />
+                    <NotificationLog />
                   </div>
                 </div>
               }
-            />
-            <Route
-              path="/booking"
-              element={<BookingPage onBookingComplete={handleBookTicket} />}
             />
             <Route path="/booking-success" element={<BookingSuccess />} />
             <Route path="/purchase-ticket/:concertId" element={<BookingPage />} />
