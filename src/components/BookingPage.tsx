@@ -63,6 +63,8 @@ export function BookingPage() {
         body: JSON.stringify(emailPayload),
       };
 
+      console.log(formattedPayload);
+
       // Call the API Gateway endpoint to send the email
       const emailResponse = await fetch(
         "https://r7tnv5efu0.execute-api.us-east-1.amazonaws.com/default/ReceiptEmailLambda",
@@ -142,8 +144,6 @@ export function BookingPage() {
       setError("Failed to process the booking.");
     }
   };
-
-
 
   // Fetch concert details and ticket categories using concertId from the URL
   React.useEffect(() => {
