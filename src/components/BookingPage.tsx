@@ -69,10 +69,14 @@ export function BookingPage() {
           body: JSON.stringify(emailPayload),
         }
       );
-  
+      
       if (!emailResponse.ok) {
-        throw new Error("Failed to send email");
+        const errorDetails = await emailResponse.text();
+        console.error("Failed to send email:", errorDetails);
+        setError("Failed to send confirmation email.");
+        return;
       }
+        
   
       // Prepare the ticket update payload
       const updatePayload = {
@@ -258,7 +262,7 @@ export function BookingPage() {
                   {/* Display Total Cost */}
                   <div className="pt-4">
                     <p className="text-lg font-semibold text-gray-900">
-                      Total Cost: <span className="text-indigo-600">${totalCost.toFixed(2)}</span>
+                      Total Cost: <span className="text-indigo-600">${totalCost}</span>
                     </p>
                   </div>
                   <div className="pt-6 border-t">
