@@ -63,7 +63,7 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
     };
   }, [concertId, onQueueComplete]);
 
-  const progressPercentage = position !== null ? Math.max(0, Math.min(100, ((position - 1) / position) * 100)) : 0;
+  const progressPercentage = position !== null ? Math.max(0, Math.min(100, ((position) / position) * 100)) : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">

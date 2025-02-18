@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ClientTicketView } from './components/ClientTicketView';
-import { NotificationLog } from './components/NotificationLog';
+import { QueueForward } from './components/QueueProcessing';
 import { QueueLanding } from './components/QueueLanding';
 import { BookingPage } from './components/BookingPage';
 import { BookingSuccess } from './components/BookingSuccess';
@@ -40,6 +40,7 @@ export default function App() {
             />
             <Route path="/booking-success" element={<BookingSuccess />} />
             <Route path="/queue" element={<QueueLandingWrapper />} />
+            <Route path="/queue-processing" element={<QueueForward />} />
             <Route path="/purchase-ticket/:concertId" element={<BookingPage />} />
           </Routes>
         </main>
