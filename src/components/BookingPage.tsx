@@ -31,8 +31,8 @@ export function BookingPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = React.useState<string>('');
   const [numberOfTickets, setNumberOfTickets] = React.useState<number>(1);
+  const [email, setEmail] = React.useState<string>('');
   const [fullName, setFullName] = React.useState<string>('');
-
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -43,7 +43,36 @@ export function BookingPage() {
     }
 
     try {
-      const response = await fetch(
+      // Call the API Gateway endpoint to send the email
+      const emailResponse = await fetch(
+        "https://r7tnv5efu0.execute-api.us-east-1.amazonaws.com/default/ReceiptEmailLambda", // Replace with your API Gateway endpoint
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullName,
+            email: email, // Replace with the email from the form
+            concertDetails: {
+              name: concert.concertName,
+              artist: concert.artist,
+              date: concert.concertDate,
+              venue: concert.venue,
+              category: selectedCategory,
+              quantity: numberOfTickets,
+              totalPrice: totalCost.toFixed(2),
+            },
+          }),
+        }
+      );
+
+      if (!emailResponse.ok) {
+        throw new Error("Failed to send email");
+      }
+
+      // Update ticket quantity (existing logic)
+      const updateResponse = await fetch(
         "https://tj70f44eok.execute-api.us-east-1.amazonaws.com/default/updateTicketCountLambda",
         {
           method: "POST",
@@ -52,7 +81,7 @@ export function BookingPage() {
           },
           body: JSON.stringify({
             body: JSON.stringify({
-              concertId: concert.concertId, // Use concert from state
+              concertId: concert.concertId,
               selectedCategory: selectedCategory,
               numberOfTickets: numberOfTickets,
             }),
@@ -60,11 +89,11 @@ export function BookingPage() {
         }
       );
 
-      if (!response.ok) {
+      if (!updateResponse.ok) {
         throw new Error("Failed to update ticket quantity");
       }
 
-      // Navigate with concert details
+      // Navigate to the booking success page
       navigate("/booking-success", {
         state: {
           ticketDetails: {
@@ -75,12 +104,10 @@ export function BookingPage() {
             category: selectedCategory,
             quantity: numberOfTickets,
             totalPrice: totalCost.toFixed(2),
-            fullName
+            fullName,
           },
         },
       });
-      
-
     } catch (err) {
       console.error(err);
       setError("Failed to process the booking.");
@@ -190,12 +217,19 @@ export function BookingPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-lg border border-gray-300" placeholder="Enter your full name" value={fullName} 
-  onChange={(e) => setFullName(e.target.value)}  />
+                    <input type="text" className="w-full px-4 py-3 rounded-lg border border-gray-300" placeholder="Enter your full name" value={fullName}
+                      onChange={(e) => setFullName(e.target.value)} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                    <input type="email" className="w-full px-4 py-3 rounded-lg border border-gray-300" placeholder="Enter your email" />
+                    <input
+                      type="email"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Seat Category</label>
