@@ -12,7 +12,6 @@ import { LayoutGrid } from 'lucide-react';
 export default function App() {
   const [isAdminView, setIsAdminView] = React.useState(false);
   const [isInQueue, setIsInQueue] = React.useState(true);
-  const [tickets, setTickets] = React.useState<Ticket[]>(mockTickets);
   const [notifications, setNotifications] = React.useState<Array<{
     id: string;
     message: string;
