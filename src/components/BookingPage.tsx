@@ -49,7 +49,7 @@ export function BookingPage() {
 
         // Fetch ticket details
         const ticketResponse = await fetch(
-          `https://3t4o14o7s6.execute-api.us-east-1.amazonaws.com/default/getTicketDetailsLambda`
+          `https://mzc9mihhb6.execute-api.us-east-1.amazonaws.com/default/getTicketDetailsLambda`
         );
         if (!ticketResponse.ok) {
           throw new Error('Failed to fetch ticket data');
