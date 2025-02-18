@@ -13,40 +13,59 @@ interface Concert {
   venue: string;
 }
 
+interface TicketCategory {
+  category: string;
+  concertId: string;
+  price: number;
+  status: string;
+  noOfTicketsLeft: number;
+  totalTickets: number;
+}
+
 export function BookingPage() {
   const { concertId } = useParams<{ concertId: string }>();
   const [concert, setConcert] = React.useState<Concert | null>(null);
+  const [ticketCategories, setTicketCategories] = React.useState<TicketCategory[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  // Fetch concert details using concertId from the URL
+  // Fetch concert details and ticket categories using concertId from the URL
   React.useEffect(() => {
-    const fetchConcert = async () => {
+    const fetchConcertAndTicketDetails = async () => {
       try {
-        const response = await fetch(
+        // Fetch concert details
+        const concertResponse = await fetch(
           `https://3t4o14o7s6.execute-api.us-east-1.amazonaws.com/default/getConcertDetailsLambda`
         );
-        if (!response.ok) {
+        if (!concertResponse.ok) {
           throw new Error('Failed to fetch concert data');
         }
-        const data: Concert[] = await response.json();
-
-        // Filter the concert data by concertId from the URL
-        const selectedConcert = data.find(concert => concert.concertId === concertId);
-        if (selectedConcert) {
-          setConcert(selectedConcert);
-        } else {
-          setError('Concert not found.');
+        const concertData: Concert[] = await concertResponse.json();
+        const selectedConcert = concertData.find(concert => concert.concertId === concertId);
+        if (!selectedConcert) {
+          throw new Error('Concert not found.');
         }
+        setConcert(selectedConcert);
+
+        // Fetch ticket details
+        const ticketResponse = await fetch(
+          `https://3t4o14o7s6.execute-api.us-east-1.amazonaws.com/default/getTicketDetailsLambda`
+        );
+        if (!ticketResponse.ok) {
+          throw new Error('Failed to fetch ticket data');
+        }
+        const ticketData: TicketCategory[] = await ticketResponse.json();
+        const filteredTicketCategories = ticketData.filter(ticket => ticket.concertId === concertId);
+        setTicketCategories(filteredTicketCategories);
       } catch (err) {
-        setError('Error fetching concert details.');
+        setError(err instanceof Error ? err.message : 'An error occurred.');
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchConcert();
+    fetchConcertAndTicketDetails();
   }, [concertId]);
 
   if (loading) {
@@ -110,9 +129,11 @@ export function BookingPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Seat Category</label>
                     <select className="w-full px-4 py-3 rounded-lg border border-gray-300">
-                      <option value="CAT A">CAT A</option>
-                      <option value="CAT B">CAT B</option>
-                      <option value="CAT C">CAT C</option>
+                      {ticketCategories.map((ticket) => (
+                        <option key={ticket.category} value={ticket.category}>
+                          {ticket.category} (${ticket.price})
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div>
