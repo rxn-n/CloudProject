@@ -48,7 +48,7 @@ export function BookingSuccess() {
           </div>
           <div className="border-t border-gray-300 pt-3">
             <p className="text-sm text-gray-500">Total Price</p>
-            <p className="font-semibold text-lg">${ticketDetails.totalPrice.toFixed(2)}</p>
+            <p className="font-semibold text-lg">${ticketDetails.totalPrice}</p>
           </div>
         </div>
 
