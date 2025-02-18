@@ -14,19 +14,7 @@ export function QueueForward() {
     websocket.onopen = () => {
       console.log('Connected to WebSocket');
     };
-
-    websocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      if (data.position === 'Pending') {
-        setPosition('You have been added to the queue. Your position is being processed.');
-      } else if (data.position === 'Served') {
-        setPosition('You have been served!');
-      } else {
-        setPosition(`Your place in the queue is: ${data.position}`);
-      }
-    };
-
+    
     websocket.onerror = (error) => {
       console.error('WebSocket Error:', error);
     };
