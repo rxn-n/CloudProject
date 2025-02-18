@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ClientTicketView } from './components/ClientTicketView';
 import { NotificationLog } from './components/NotificationLog';
@@ -38,10 +39,25 @@ export default function App() {
               element={<ClientTicketView />}
             />
             <Route path="/booking-success" element={<BookingSuccess />} />
+            <Route path="/in-queue" element={<QueueLandingWrapper />} />
             <Route path="/purchase-ticket/:concertId" element={<BookingPage />} />
           </Routes>
         </main>
       </div>
     </Router>
+  );
+}
+
+// Wrapper component for QueueLanding to handle navigation
+function QueueLandingWrapper() {
+  const navigate = useNavigate();
+
+  const handleQueueComplete = () => {
+    // Redirect to the booking page when the queue is complete
+    navigate('/booking');
+  };
+
+  return (
+    <QueueLanding onQueueComplete={handleQueueComplete} />
   );
 }

@@ -1,56 +1,76 @@
 import React, { useEffect, useState } from 'react';
-import { Timer, Users, Ticket as TicketIcon, ArrowRight, Loader2 } from 'lucide-react';
+import { Users, Ticket as TicketIcon, ArrowRight, Loader2 } from 'lucide-react';
 
 interface QueueLandingProps {
   onQueueComplete: () => void;
-  initialPosition?: number;
-  estimatedWaitTime?: number;
 }
 
-export function QueueLanding({ 
-  onQueueComplete, 
-  initialPosition = 3, 
-  estimatedWaitTime = 0.1 
-}: QueueLandingProps) {
-  const [position, setPosition] = useState(initialPosition);
-  const [timeRemaining, setTimeRemaining] = useState(estimatedWaitTime * 60); // Convert to seconds
+export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
+  const [position, setPosition] = useState<number | null>(null);
+  const [connectionId, setConnectionId] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
 
+  // Join the queue when the component mounts
   useEffect(() => {
-    // Simulate queue position updates
-    const positionInterval = setInterval(() => {
-      setPosition((prev) => {
-        const newPosition = prev - Math.floor(Math.random() * 1 + 1);
-        if (newPosition <= 0) {
-          clearInterval(positionInterval);
+    const joinQueue = async () => {
+      try {
+        // Call your Lambda function to join the queue
+        const response = await fetch(
+          'https://abc123.execute-api.us-east-1.amazonaws.com/production/purchaseTicket', // Replace with your API Gateway endpoint
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'purchaseTicket' }), // Match the expected payload in your Lambda
+          }
+        );
+        const data = await response.json();
+        setConnectionId(data.connectionId); // Assuming your Lambda returns a connectionId
+        setPosition(data.position); // Assuming your Lambda returns the initial position
+      } catch (error) {
+        console.error('Error joining queue:', error);
+      }
+    };
+
+    joinQueue();
+  }, []);
+
+  // WebSocket integration for real-time updates
+  useEffect(() => {
+    if (!connectionId) return;
+
+    const ws = new WebSocket('wss://vcexv514vc.execute-api.us-east-1.amazonaws.com/production');
+
+    ws.onopen = () => {
+      console.log('WebSocket connection established');
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.position !== undefined) {
+        setPosition(data.position);
+
+        // Redirect to the booking page when the position reaches 0
+        if (data.position === 0) {
           setIsRedirecting(true);
           setTimeout(() => {
             onQueueComplete();
-          }, 2000);
-          return 0;
+          }, 2000); // Delay for a smooth transition
         }
-        return newPosition;
-      });
-    }, 2000);
-
-    // Update time remaining
-    const timeInterval = setInterval(() => {
-      setTimeRemaining((prev) => Math.max(0, prev - 1));
-    }, 1000);
-
-    return () => {
-      clearInterval(positionInterval);
-      clearInterval(timeInterval);
+      }
     };
-  }, [onQueueComplete]);
 
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
 
-  const progressPercentage = Math.max(0, Math.min(100, ((initialPosition - position) / initialPosition) * 100));
+    ws.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+
+    return () => ws.close();
+  }, [connectionId, onQueueComplete]);
+
+  const progressPercentage = position !== null ? Math.max(0, Math.min(100, ((position - 1) / position) * 100)) : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
@@ -90,13 +110,9 @@ export function QueueLanding({
                 <div className="bg-gray-50 rounded-xl p-6 text-center transform transition-all hover:scale-105">
                   <Users className="w-6 h-6 text-indigo-600 mx-auto mb-3" />
                   <p className="text-sm text-gray-600 mb-1">Your position</p>
-                  <p className="text-2xl font-bold text-gray-900">{position.toLocaleString()}</p>
-                </div>
-
-                <div className="bg-gray-50 rounded-xl p-6 text-center transform transition-all hover:scale-105">
-                  <Timer className="w-6 h-6 text-indigo-600 mx-auto mb-3" />
-                  <p className="text-sm text-gray-600 mb-1">Estimated wait time</p>
-                  <p className="text-2xl font-bold text-gray-900">{formatTime(timeRemaining)}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {position !== null ? position.toLocaleString() : '...'}
+                  </p>
                 </div>
 
                 <div className="bg-gray-50 rounded-xl p-6 text-center transform transition-all hover:scale-105">
