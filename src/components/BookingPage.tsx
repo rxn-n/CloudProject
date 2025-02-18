@@ -28,6 +28,8 @@ export function BookingPage() {
   const [ticketCategories, setTicketCategories] = React.useState<TicketCategory[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = React.useState<string>('');
+  const [numberOfTickets, setNumberOfTickets] = React.useState<number>(1);
 
   // Fetch concert details and ticket categories using concertId from the URL
   React.useEffect(() => {
@@ -57,6 +59,11 @@ export function BookingPage() {
         const ticketData: TicketCategory[] = await ticketResponse.json();
         const filteredTicketCategories = ticketData.filter(ticket => ticket.concertId === concertId);
         setTicketCategories(filteredTicketCategories);
+
+        // Set the default selected category to the first available category
+        if (filteredTicketCategories.length > 0) {
+          setSelectedCategory(filteredTicketCategories[0].category);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred.');
         console.error(err);
@@ -67,6 +74,10 @@ export function BookingPage() {
 
     fetchConcertAndTicketDetails();
   }, [concertId]);
+
+  // Calculate the total cost
+  const selectedTicket = ticketCategories.find(ticket => ticket.category === selectedCategory);
+  const totalCost = selectedTicket ? selectedTicket.price * numberOfTickets : 0;
 
   if (loading) {
     return <p className="text-center text-gray-600">Loading concert details...</p>;
@@ -128,7 +139,11 @@ export function BookingPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Seat Category</label>
-                    <select className="w-full px-4 py-3 rounded-lg border border-gray-300">
+                    <select
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300"
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
                       {ticketCategories.map((ticket) => (
                         <option key={ticket.category} value={ticket.category}>
                           {ticket.category} (${ticket.price})
@@ -138,11 +153,21 @@ export function BookingPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Number of Tickets</label>
-                    <select className="w-full px-4 py-3 rounded-lg border border-gray-300">
+                    <select
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300"
+                      value={numberOfTickets}
+                      onChange={(e) => setNumberOfTickets(Number(e.target.value))}
+                    >
                       {[1, 2, 3, 4].map(num => (
                         <option key={num} value={num}>{num} {num === 1 ? 'ticket' : 'tickets'}</option>
                       ))}
                     </select>
+                  </div>
+                  {/* Display Total Cost */}
+                  <div className="pt-4">
+                    <p className="text-lg font-semibold text-gray-900">
+                      Total Cost: <span className="text-indigo-600">${totalCost.toFixed(2)}</span>
+                    </p>
                   </div>
                   <div className="pt-6 border-t">
                     <h4 className="text-lg font-semibold text-gray-900 mb-4">Payment Details</h4>
