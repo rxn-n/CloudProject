@@ -10,48 +10,32 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [position, setPosition] = useState<number | null>(null);
-  const [connectionId, setConnectionId] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [ws, setWs] = useState<WebSocket | null>(null);
 
   // Get the concertId from the navigation state
   const concertId = location.state?.concertId;
 
-  // Join the queue when the component mounts
+  // Establish WebSocket connection when the component mounts
   useEffect(() => {
-    const joinQueue = async () => {
-      try {
-        // Call your Lambda function to join the queue
-        const response = await fetch(
-          'https://abc123.execute-api.us-east-1.amazonaws.com/production/purchaseTicket', // Replace with your API Gateway endpoint
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'purchaseTicket', concertId }), // Pass the concertId to the Lambda
-          }
-        );
-        const data = await response.json();
-        setConnectionId(data.connectionId); // Assuming your Lambda returns a connectionId
-        setPosition(data.position); // Assuming your Lambda returns the initial position
-      } catch (error) {
-        console.error('Error joining queue:', error);
-      }
-    };
+    const websocket = new WebSocket('wss://vcexv514vc.execute-api.us-east-1.amazonaws.com/production');
+    setWs(websocket);
 
-    joinQueue();
-  }, [concertId]);
-
-  // WebSocket integration for real-time updates
-  useEffect(() => {
-    if (!connectionId) return;
-
-    const ws = new WebSocket('wss://vcexv514vc.execute-api.us-east-1.amazonaws.com/production');
-
-    ws.onopen = () => {
+    websocket.onopen = () => {
       console.log('WebSocket connection established');
+
+      // Send the purchaseTicket action to join the queue
+      websocket.send(
+        JSON.stringify({
+          action: 'purchaseTicket',
+          concertId,
+        })
+      );
     };
 
-    ws.onmessage = (event) => {
+    websocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+
       if (data.position !== undefined) {
         setPosition(data.position);
 
@@ -65,16 +49,19 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
       }
     };
 
-    ws.onerror = (error) => {
+    websocket.onerror = (error) => {
       console.error('WebSocket error:', error);
     };
 
-    ws.onclose = () => {
+    websocket.onclose = () => {
       console.log('WebSocket connection closed');
     };
 
-    return () => ws.close();
-  }, [connectionId, onQueueComplete]);
+    // Cleanup WebSocket connection when the component unmounts
+    return () => {
+      websocket.close();
+    };
+  }, [concertId, onQueueComplete]);
 
   const progressPercentage = position !== null ? Math.max(0, Math.min(100, ((position - 1) / position) * 100)) : 0;
 

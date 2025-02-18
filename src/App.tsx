@@ -39,7 +39,7 @@ export default function App() {
               element={<ClientTicketView />}
             />
             <Route path="/booking-success" element={<BookingSuccess />} />
-            <Route path="/in-queue" element={<QueueLandingWrapper />} />
+            <Route path="/queue" element={<QueueLandingWrapper />} />
             <Route path="/purchase-ticket/:concertId" element={<BookingPage />} />
           </Routes>
         </main>
