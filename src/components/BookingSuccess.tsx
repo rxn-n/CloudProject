@@ -19,7 +19,7 @@ export function BookingSuccess() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
         <h2 className="text-2xl font-bold text-green-600 text-center">Booking Confirmed!</h2>
-        <p className="text-gray-700 text-center mt-2">Thank you for your purchase.</p>
+        <p className="text-gray-700 text-center mt-2">Thank you for your purchase, {ticketDetails.fullName}!</p>
 
         <div className="mt-4 space-y-3">
           <div>

@@ -31,6 +31,7 @@ export function BookingPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = React.useState<string>('');
   const [numberOfTickets, setNumberOfTickets] = React.useState<number>(1);
+  const [fullName, setFullName] = React.useState<string>('');
 
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -66,15 +67,19 @@ export function BookingPage() {
       // Navigate with concert details
       navigate("/booking-success", {
         state: {
-          concertName: concert.concertName,
-          concertDate: concert.concertDate,
-          venue: concert.venue,
-          artist: concert.artist,
-          category: selectedCategory,
-          numberOfTickets: numberOfTickets,
-          totalCost: totalCost.toFixed(2),
+          ticketDetails: {
+            name: concert.concertName,
+            artist: concert.artist,
+            date: concert.concertDate,
+            venue: concert.venue,
+            category: selectedCategory,
+            quantity: numberOfTickets,
+            totalPrice: totalCost.toFixed(2),
+            fullName
+          },
         },
       });
+      
 
     } catch (err) {
       console.error(err);
@@ -185,7 +190,8 @@ export function BookingPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-lg border border-gray-300" placeholder="Enter your full name" />
+                    <input type="text" className="w-full px-4 py-3 rounded-lg border border-gray-300" placeholder="Enter your full name" value={fullName} 
+  onChange={(e) => setFullName(e.target.value)}  />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
