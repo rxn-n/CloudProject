@@ -9,7 +9,6 @@ import { BookingSuccess } from './components/BookingSuccess';
 import { LayoutGrid } from 'lucide-react';
 
 export default function App() {
-  const navigate = useNavigate();
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100">
@@ -18,9 +17,9 @@ export default function App() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <LayoutGrid className="w-8 h-8 text-indigo-600" />
-                <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+                <p className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
                   TicketMaster
-                </div>
+                </p>
               </div>
               {/* <button
                 className="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600
