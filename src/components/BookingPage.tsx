@@ -108,19 +108,19 @@ export function BookingPage() {
                     <input type="email" className="w-full px-4 py-3 rounded-lg border border-gray-300" placeholder="Enter your email" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Number of Tickets</label>
-                    <select className="w-full px-4 py-3 rounded-lg border border-gray-300">
-                      {[1, 2, 3, 4].map(num => (
-                        <option key={num} value={num}>{num} {num === 1 ? 'ticket' : 'tickets'}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Seat Category</label>
                     <select className="w-full px-4 py-3 rounded-lg border border-gray-300">
                       <option value="CAT A">CAT A</option>
                       <option value="CAT B">CAT B</option>
                       <option value="CAT C">CAT C</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Number of Tickets</label>
+                    <select className="w-full px-4 py-3 rounded-lg border border-gray-300">
+                      {[1, 2, 3, 4].map(num => (
+                        <option key={num} value={num}>{num} {num === 1 ? 'ticket' : 'tickets'}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="pt-6 border-t">
