@@ -12,6 +12,7 @@ import {
 interface Concert {
 	concertId: string;
 	concertName: string;
+	concertDate: string;
 	artist: string;
 	image: string;
 	totalTickets: number;
@@ -141,7 +142,7 @@ export function ClientTicketView() {
 								<h2 className="text-3xl font-bold mb-2">{concert.artist}</h2>
 								<div className="flex items-center gap-4">
 									<span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm">
-										Status: {concert.availability}
+										{concert.concertDate}
 									</span>
 									<button
 										onClick={() => toggleConcert(concert.concertId)}
