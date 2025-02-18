@@ -76,7 +76,6 @@ export function BookingPage() {
         setError("Failed to send confirmation email.");
         return;
       }
-        
   
       // Prepare the ticket update payload
       const updatePayload = {
@@ -100,6 +99,29 @@ export function BookingPage() {
       if (!updateResponse.ok) {
         throw new Error("Failed to update ticket quantity");
       }
+
+      // Step 1: Generate ticket UUIDs and store them in DynamoDB
+    const ticketResponse = await fetch(
+      "https://ur280zyt0i.execute-api.us-east-1.amazonaws.com/default/ticketReceipts",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email, // User's email
+          num_tickets: numberOfTickets, // Number of tickets to generate
+        }),
+      }
+    );
+
+    if (!ticketResponse.ok) {
+      throw new Error("Failed to generate tickets.");
+    }
+
+    const ticketData = await ticketResponse.json();
+    console.log("Tickets generated:", ticketData.tickets); // Debugging log
+
   
       // Navigate to the booking success page
       navigate("/booking-success", {
