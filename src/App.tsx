@@ -9,59 +9,6 @@ import { BookingSuccess } from './components/BookingSuccess';
 import type { Ticket, TicketGroup } from './types';
 import { LayoutGrid } from 'lucide-react';
 
-// Update mock data to include quantity
-const mockTickets: Ticket[] = [
-  {
-    id: '1',
-    name: 'Eras Tour',
-    category: 'CAT1',
-    status: 'available',
-    price: 150,
-    date: '2024-04-15',
-    venue: 'National Stadium, Singapore',
-    image: 'https://th.bing.com/th/id/R.9bdfcb466cba237265b5d0327bc74904?rik=uQx147UWAxm8ng&riu=http%3a%2f%2fmulticinestenerife.com%2fwp-content%2fuploads%2f2023%2f10%2fSlider-Taylor.jpg&ehk=gvCNAT4gmKQdnq1eLAeZVmx3M%2bXiEIXOzhGkDDC7om8%3d&risl=&pid=ImgRaw&r=0',
-    artist: 'Taylor Swift',
-    quantity: 4
-  },
-    {
-    id: '2',
-    name: 'Eras Tour',
-    category: 'CAT2',
-    status: 'available',
-    price: 130,
-    date: '2024-04-15',
-    venue: 'National Stadium, Singapore',
-    image: 'https://th.bing.com/th/id/R.9bdfcb466cba237265b5d0327bc74904?rik=uQx147UWAxm8ng&riu=http%3a%2f%2fmulticinestenerife.com%2fwp-content%2fuploads%2f2023%2f10%2fSlider-Taylor.jpg&ehk=gvCNAT4gmKQdnq1eLAeZVmx3M%2bXiEIXOzhGkDDC7om8%3d&risl=&pid=ImgRaw&r=0',
-    artist: 'Taylor Swift',
-    quantity: 4
-  },
-    {
-    id: '3',
-    name: 'World Tour',
-    category: 'CAT1',
-    status: 'available',
-    price: 150,
-    date: '2024-04-15',
-    venue: 'National Stadium, Singapore',
-    image: 'https://www.hipjpn.co.jp/live/brunomars2024/images/kv_artist_en_pc.jpg',
-    artist: 'Bruno Mars',
-    quantity: 4
-  },
-      {
-    id: '4',
-    name: 'World Tour',
-    category: 'CAT2',
-    status: 'available',
-    price: 130,
-    date: '2024-04-15',
-    venue: 'National Stadium, Singapore',
-    image: 'https://www.hipjpn.co.jp/live/brunomars2024/images/kv_artist_en_pc.jpg',
-    artist: 'Bruno Mars',
-    quantity: 4
-  },
-  // ... (update other ticket objects with quantity property)
-];
-
 export default function App() {
   const [isAdminView, setIsAdminView] = React.useState(false);
   const [isInQueue, setIsInQueue] = React.useState(true);
