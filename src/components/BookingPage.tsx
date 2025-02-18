@@ -52,14 +52,26 @@ export function BookingPage() {
           }),
         }
       );
-  
-      if (!response.ok) {
-        throw new Error('Failed to update ticket quantity');
+      
+      if (!concert) {
+        setError("Concert details not found.");
+        return;
       }
   
       // Handle success (e.g., show a success message or redirect to another page)
       alert('Tickets booked successfully!');
-      navigate(`/booking-success`)
+      navigate("/booking-success", {
+        state: {
+          concertName: concert.concertName,
+          concertDate: concert.concertDate,
+          venue: concert.venue,
+          artist: concert.artist,
+          category: selectedCategory,
+          numberOfTickets: numberOfTickets,
+          totalCost: totalCost.toFixed(2),
+        },
+      }); 
+
     } catch (err) {
       console.error(err);
       setError('Failed to process the booking.');
