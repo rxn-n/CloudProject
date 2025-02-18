@@ -1,7 +1,58 @@
 import React from 'react';
-import { ArrowLeft, Ticket as TicketIcon, Calendar, MapPin, User, Mail, CreditCard, Shield } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import { ArrowLeft, Ticket as TicketIcon, Calendar, MapPin, Shield } from 'lucide-react';
+
+interface Concert {
+  concertId: string;
+  concertName: string;
+  artist: string;
+  image: string;
+  totalTickets: number;
+  availability: string;
+  venue: string;
+}
 
 export function BookingPage() {
+  const { concertId } = useParams<{ concertId: string }>();
+  const [concert, setConcert] = React.useState<Concert | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  // Fetch concert details using concertId from the URL
+  React.useEffect(() => {
+    const fetchConcert = async () => {
+      try {
+        const response = await fetch(
+          `https://3t4o14o7s6.execute-api.us-east-1.amazonaws.com/default/getConcertDetailsLambda?concertId=${concertId}`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch concert data');
+        }
+        const data: Concert = await response.json();
+        setConcert(data);
+      } catch (err) {
+        setError('Error fetching concert details.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchConcert();
+  }, [concertId]);
+
+  if (loading) {
+    return <p className="text-center text-gray-600">Loading concert details...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center text-red-500">{error}</p>;
+  }
+
+  if (!concert) {
+    return <p className="text-center text-gray-600">Concert not found.</p>;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -16,8 +67,8 @@ export function BookingPage() {
             <div className="md:w-1/3 bg-gradient-to-br from-indigo-500 to-purple-600 p-8 text-white">
               <div className="mb-8">
                 <TicketIcon className="w-12 h-12 mb-4" />
-                <h2 className="text-2xl font-bold mb-2">Event Name</h2>
-                <p className="text-indigo-200">Artist Name</p>
+                <h2 className="text-2xl font-bold mb-2">{concert.concertName}</h2>
+                <p className="text-indigo-200">{concert.artist}</p>
               </div>
               <div className="space-y-4">
                 <div className="flex items-center">
@@ -26,11 +77,11 @@ export function BookingPage() {
                 </div>
                 <div className="flex items-center">
                   <MapPin className="w-5 h-5 mr-3 text-indigo-200" />
-                  <span>Event Venue</span>
+                  <span>{concert.venue}</span>
                 </div>
                 <div className="flex items-center">
                   <TicketIcon className="w-5 h-5 mr-3 text-indigo-200" />
-                  <span>Category</span>
+                  <span>{concert.availability}</span>
                 </div>
               </div>
             </div>

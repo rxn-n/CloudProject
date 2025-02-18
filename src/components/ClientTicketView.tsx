@@ -173,7 +173,7 @@ export function ClientTicketView() {
 							<div className="border-t border-gray-100">
 								{/* Display ticket categories */}
 								<div className="p-6 text-gray-600">
-									<h3 className="text-xl font-semibold">Ticket Categories</h3>
+									<h3 className="text-xl font-semibold mb-2">Ticket Categories</h3>
 									{ticketCategories
 										.filter((ticket) => ticket.concertId === concert.concertId)
 										.map((ticket) => (

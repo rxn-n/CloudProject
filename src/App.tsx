@@ -5,7 +5,6 @@ import { NotificationLog } from './components/NotificationLog';
 import { QueueLanding } from './components/QueueLanding';
 import { BookingPage } from './components/BookingPage';
 import { BookingSuccess } from './components/BookingSuccess';
-import type { Ticket, TicketGroup } from './types';
 import { LayoutGrid } from 'lucide-react';
 
 export default function App() {
