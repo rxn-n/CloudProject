@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Ticket as TicketIcon, Calendar, MapPin, Shield } from 'lucide-react';
 
 interface Concert {
@@ -23,6 +23,7 @@ interface TicketCategory {
 }
 
 export function BookingPage() {
+  const navigate = useNavigate();
   const { concertId } = useParams<{ concertId: string }>();
   const [concert, setConcert] = React.useState<Concert | null>(null);
   const [ticketCategories, setTicketCategories] = React.useState<TicketCategory[]>([]);
@@ -58,6 +59,7 @@ export function BookingPage() {
   
       // Handle success (e.g., show a success message or redirect to another page)
       alert('Tickets booked successfully!');
+      navigate(`/booking-success`)
     } catch (err) {
       console.error(err);
       setError('Failed to process the booking.');
