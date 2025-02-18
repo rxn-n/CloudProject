@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Ticket as TicketIcon, ArrowRight, Loader2 } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Users, Ticket as TicketIcon, Loader2 } from 'lucide-react';
 
 interface QueueLandingProps {
   onQueueComplete: () => void;
 }
 
 export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [position, setPosition] = useState<number | null>(null);
   const [connectionId, setConnectionId] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
+
+  // Get the concertId from the navigation state
+  const concertId = location.state?.concertId;
 
   // Join the queue when the component mounts
   useEffect(() => {
@@ -20,7 +26,7 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'purchaseTicket' }), // Match the expected payload in your Lambda
+            body: JSON.stringify({ action: 'purchaseTicket', concertId }), // Pass the concertId to the Lambda
           }
         );
         const data = await response.json();
@@ -32,7 +38,7 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
     };
 
     joinQueue();
-  }, []);
+  }, [concertId]);
 
   // WebSocket integration for real-time updates
   useEffect(() => {
@@ -112,14 +118,6 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
                   <p className="text-sm text-gray-600 mb-1">Your position</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {position !== null ? position.toLocaleString() : '...'}
-                  </p>
-                </div>
-
-                <div className="bg-gray-50 rounded-xl p-6 text-center transform transition-all hover:scale-105">
-                  <ArrowRight className="w-6 h-6 text-indigo-600 mx-auto mb-3" />
-                  <p className="text-sm text-gray-600 mb-1">Next update in</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    <span className="tabular-nums">0:02</span>
                   </p>
                 </div>
               </div>
