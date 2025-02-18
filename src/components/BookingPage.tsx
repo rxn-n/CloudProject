@@ -3,14 +3,14 @@ import { useParams } from 'react-router-dom';
 import { ArrowLeft, Ticket as TicketIcon, Calendar, MapPin, Shield } from 'lucide-react';
 
 interface Concert {
-	concertId: string;
-	concertName: string;
-	concertDate: string;
-	artist: string;
-	image: string;
-	totalTickets: number;
-	availability: string;
-	venue: string;
+  concertId: string;
+  concertName: string;
+  concertDate: string;
+  artist: string;
+  image: string;
+  totalTickets: number;
+  availability: string;
+  venue: string;
 }
 
 export function BookingPage() {
@@ -113,6 +113,14 @@ export function BookingPage() {
                       {[1, 2, 3, 4].map(num => (
                         <option key={num} value={num}>{num} {num === 1 ? 'ticket' : 'tickets'}</option>
                       ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Seat Category</label>
+                    <select className="w-full px-4 py-3 rounded-lg border border-gray-300">
+                      <option value="CAT A">CAT A</option>
+                      <option value="CAT B">CAT B</option>
+                      <option value="CAT C">CAT C</option>
                     </select>
                   </div>
                   <div className="pt-6 border-t">
