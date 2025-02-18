@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { TicketList } from './components/TicketList';
 import { ClientTicketView } from './components/ClientTicketView';
 import { NotificationLog } from './components/NotificationLog';
 import { QueueLanding } from './components/QueueLanding';
