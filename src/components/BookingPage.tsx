@@ -3,13 +3,14 @@ import { useParams } from 'react-router-dom';
 import { ArrowLeft, Ticket as TicketIcon, Calendar, MapPin, Shield } from 'lucide-react';
 
 interface Concert {
-  concertId: string;
-  concertName: string;
-  artist: string;
-  image: string;
-  totalTickets: number;
-  availability: string;
-  venue: string;
+	concertId: string;
+	concertName: string;
+	concertDate: string;
+	artist: string;
+	image: string;
+	totalTickets: number;
+	availability: string;
+	venue: string;
 }
 
 export function BookingPage() {
@@ -80,7 +81,7 @@ export function BookingPage() {
               <div className="space-y-4">
                 <div className="flex items-center">
                   <Calendar className="w-5 h-5 mr-3 text-indigo-200" />
-                  <span>Event Date</span>
+                  <span>{concert.concertDate}</span>
                 </div>
                 <div className="flex items-center">
                   <MapPin className="w-5 h-5 mr-3 text-indigo-200" />
