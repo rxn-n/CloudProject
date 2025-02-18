@@ -26,11 +26,8 @@ interface TicketCategory {
 	status: string;
 }
 
-interface ClientTicketViewProps {
-	onBookTicket: (ticketId: string) => void;
-}
+export function ClientTicketView() {
 
-export function ClientTicketView {
 	const navigate = useNavigate();
 	const [concerts, setConcerts] = React.useState<Concert[]>([]);
 	const [ticketCategories, setTicketCategories] = React.useState<
