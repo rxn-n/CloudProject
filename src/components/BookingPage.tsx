@@ -23,13 +23,20 @@ export function BookingPage() {
     const fetchConcert = async () => {
       try {
         const response = await fetch(
-          `https://3t4o14o7s6.execute-api.us-east-1.amazonaws.com/default/getConcertDetailsLambda?concertId=${concertId}`
+          `https://3t4o14o7s6.execute-api.us-east-1.amazonaws.com/default/getConcertDetailsLambda`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch concert data');
         }
-        const data: Concert = await response.json();
-        setConcert(data);
+        const data: Concert[] = await response.json();
+
+        // Filter the concert data by concertId from the URL
+        const selectedConcert = data.find(concert => concert.concertId === concertId);
+        if (selectedConcert) {
+          setConcert(selectedConcert);
+        } else {
+          setError('Concert not found.');
+        }
       } catch (err) {
         setError('Error fetching concert details.');
         console.error(err);
