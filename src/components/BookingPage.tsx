@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Ticket as TicketIcon, Calendar, MapPin, Shield } from 'lucide-react';
+import { time } from 'console';
 
 interface Concert {
   concertId: string;
@@ -47,15 +48,13 @@ export function BookingPage() {
       const emailPayload = {
         fullName,
         email, // Use the email from the form
-        concertDetails: {
-          name: concert.concertName,
-          artist: concert.artist,
-          date: concert.concertDate,
-          venue: concert.venue,
-          category: selectedCategory,
-          quantity: numberOfTickets,
-          totalPrice: totalCost.toFixed(2), // Ensure totalPrice is formatted as a string with 2 decimal places
-        },
+        name: concert.concertName,
+        artist: concert.artist,
+        date: concert.concertDate,
+        venue: concert.venue,
+        category: selectedCategory,
+        quantity: numberOfTickets,
+        totalPrice: totalCost.toFixed(2)
       };
 
       // Convert the payload into the required format
@@ -129,12 +128,21 @@ export function BookingPage() {
       const ticketData = await ticketResponse.json();
       console.log("Tickets generated:", ticketData.tickets); // Debugging log
 
+      const concertDetails = {
+        name: concert.concertName,
+        artist: concert.artist,
+        date: concert.concertDate,
+        venue: concert.venue,
+        category: selectedCategory,
+        quantity: numberOfTickets,
+        totalPrice: totalCost.toFixed(2), // Ensure totalPrice is formatted as a string with 2 decimal places
+      };
 
       // Navigate to the booking success page
       navigate("/booking-success", {
         state: {
           ticketDetails: {
-            ...emailPayload.concertDetails, // Spread concert details
+            ...concertDetails, // Spread concert details
             fullName,
           },
         },
