@@ -188,6 +188,7 @@ export default function App() {
               element={<BookingPage onBookingComplete={handleBookTicket} />}
             />
             <Route path="/booking-success" element={<BookingSuccess />} />
+            <Route path="/purchase-ticket/:concertId" element={<BookingPage />} />
           </Routes>
         </main>
       </div>
