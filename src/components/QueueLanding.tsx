@@ -36,13 +36,16 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
     };
 
     websocket.onmessage = (event) => {
+      console.log('WebSocket message received:', event.data); // Log the WebSocket message
       const data = JSON.parse(event.data);
 
       if (data.position !== undefined) {
+        console.log('Position updated:', data.position); // Log the position
         setPosition(data.position);
 
         // Redirect to the purchase-ticket page when the position reaches 0
         if (data.position === 0) {
+          console.log('Position is 0. Redirecting...'); // Log before redirecting
           setIsRedirecting(true);
           setTimeout(() => {
             onQueueComplete(); // Call the onQueueComplete callback
