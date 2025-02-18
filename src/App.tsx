@@ -9,6 +9,7 @@ import { BookingSuccess } from './components/BookingSuccess';
 import { LayoutGrid } from 'lucide-react';
 
 export default function App() {
+  const navigate = useNavigate();
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100">
@@ -17,9 +18,9 @@ export default function App() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <LayoutGrid className="w-8 h-8 text-indigo-600" />
-                <a href='/' className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+                <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
                   TicketMaster
-                </a>
+                </div>
               </div>
               {/* <button
                 className="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600
@@ -46,19 +47,5 @@ export default function App() {
         </main>
       </div>
     </Router>
-  );
-}
-
-// Wrapper component for QueueLanding to handle navigation
-function QueueLandingWrapper() {
-  const navigate = useNavigate();
-
-  const handleQueueComplete = () => {
-    // Redirect to the booking page when the queue is complete
-    navigate('/booking');
-  };
-
-  return (
-    <QueueLanding onQueueComplete={handleQueueComplete} />
   );
 }

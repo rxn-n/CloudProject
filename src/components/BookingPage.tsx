@@ -36,16 +36,18 @@ export function BookingPage() {
     event.preventDefault();
     try {
       const response = await fetch(
-        'https://your-api-endpoint/updateTicketQuantity', // Your API endpoint
+        'https://tj70f44eok.execute-api.us-east-1.amazonaws.com/default/updateTicketCountLambda', // Your API endpoint
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            concertId,
-            selectedCategory,
-            numberOfTickets,
+            body: JSON.stringify({
+              concertId: concertId, // Using the concertId from the URL
+              selectedCategory: selectedCategory, // Selected category from the form
+              numberOfTickets: numberOfTickets, // Number of tickets user is purchasing
+            }),
           }),
         }
       );
@@ -55,11 +57,13 @@ export function BookingPage() {
       }
   
       // Handle success (e.g., show a success message or redirect to another page)
+      alert('Tickets booked successfully!');
     } catch (err) {
       console.error(err);
       setError('Failed to process the booking.');
     }
   };
+  
 
   // Fetch concert details and ticket categories using concertId from the URL
   React.useEffect(() => {
