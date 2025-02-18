@@ -36,41 +36,51 @@ export function BookingPage() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+  
     if (!concert) {
       setError("Concert details not found.");
       return;
     }
-
+  
     try {
+      // Prepare the email payload
+      const emailPayload = {
+        fullName,
+        email, // Use the email from the form
+        concertDetails: {
+          name: concert.concertName,
+          artist: concert.artist,
+          date: concert.concertDate,
+          venue: concert.venue,
+          category: selectedCategory,
+          quantity: numberOfTickets,
+          totalPrice: totalCost,
+        },
+      };
+  
       // Call the API Gateway endpoint to send the email
       const emailResponse = await fetch(
-        "https://r7tnv5efu0.execute-api.us-east-1.amazonaws.com/default/ReceiptEmailLambda", // Replace with your API Gateway endpoint
+        "https://r7tnv5efu0.execute-api.us-east-1.amazonaws.com/default/ReceiptEmailLambda",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            fullName,
-            email: email, // Replace with the email from the form
-            concertDetails: {
-              name: concert.concertName,
-              artist: concert.artist,
-              date: concert.concertDate,
-              venue: concert.venue,
-              category: selectedCategory,
-              quantity: numberOfTickets,
-              totalPrice: totalCost.toFixed(2),
-            },
-          }),
+          body: JSON.stringify(emailPayload),
         }
       );
-
+  
       if (!emailResponse.ok) {
         throw new Error("Failed to send email");
       }
-
+  
+      // Prepare the ticket update payload
+      const updatePayload = {
+        concertId: concert.concertId,
+        selectedCategory: selectedCategory,
+        numberOfTickets: numberOfTickets,
+      };
+  
       // Update ticket quantity (existing logic)
       const updateResponse = await fetch(
         "https://tj70f44eok.execute-api.us-east-1.amazonaws.com/default/updateTicketCountLambda",
@@ -79,31 +89,19 @@ export function BookingPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            body: JSON.stringify({
-              concertId: concert.concertId,
-              selectedCategory: selectedCategory,
-              numberOfTickets: numberOfTickets,
-            }),
-          }),
+          body: JSON.stringify({ body: JSON.stringify(updatePayload) }),
         }
       );
-
+  
       if (!updateResponse.ok) {
         throw new Error("Failed to update ticket quantity");
       }
-
+  
       // Navigate to the booking success page
       navigate("/booking-success", {
         state: {
           ticketDetails: {
-            name: concert.concertName,
-            artist: concert.artist,
-            date: concert.concertDate,
-            venue: concert.venue,
-            category: selectedCategory,
-            quantity: numberOfTickets,
-            totalPrice: totalCost.toFixed(2),
+            ...emailPayload.concertDetails, // Spread concert details
             fullName,
           },
         },
