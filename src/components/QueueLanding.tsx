@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Users, Ticket as TicketIcon, Loader2 } from 'lucide-react';
 
 interface QueueLandingProps {
@@ -7,18 +7,16 @@ interface QueueLandingProps {
 }
 
 export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
-  const location = useLocation();
   const navigate = useNavigate();
   const [position, setPosition] = useState<number | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [ws, setWs] = useState<WebSocket | null>(null);
 
-  // Get the concertId from the navigation state
-  const concertId = location.state?.concertId;
-
   // Establish WebSocket connection when the component mounts
   useEffect(() => {
-    const websocket = new WebSocket('wss://vcexv514vc.execute-api.us-east-1.amazonaws.com/production');
+    const websocket = new WebSocket(
+      'wss://vcexv514vc.execute-api.us-east-1.amazonaws.com/production'
+    );
     setWs(websocket);
 
     websocket.onopen = () => {
@@ -28,7 +26,6 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
       websocket.send(
         JSON.stringify({
           action: 'purchaseTicket',
-          concertId,
         })
       );
     };
@@ -43,7 +40,8 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
         if (data.position === 0) {
           setIsRedirecting(true);
           setTimeout(() => {
-            onQueueComplete();
+            onQueueComplete(); // Call the onQueueComplete callback
+            navigate('/booking'); // Navigate to the booking page
           }, 2000); // Delay for a smooth transition
         }
       }
@@ -61,9 +59,9 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
     return () => {
       websocket.close();
     };
-  }, [concertId, onQueueComplete]);
+  }, [navigate, onQueueComplete]);
 
-  const progressPercentage = position !== null ? Math.max(0, Math.min(100, ((position - 1 ) / position) * 100)) : 0;
+  const progressPercentage = position !== null ? Math.max(0, Math.min(100, ((position - 1) / position) * 100)) : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
