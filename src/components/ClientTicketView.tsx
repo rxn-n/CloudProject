@@ -30,7 +30,7 @@ interface ClientTicketViewProps {
 	onBookTicket: (ticketId: string) => void;
 }
 
-export function ClientTicketView({ onBookTicket }: ClientTicketViewProps) {
+export function ClientTicketView {
 	const navigate = useNavigate();
 	const [concerts, setConcerts] = React.useState<Concert[]>([]);
 	const [ticketCategories, setTicketCategories] = React.useState<

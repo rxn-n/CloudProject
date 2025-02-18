@@ -36,10 +36,7 @@ export default function App() {
           <Routes>
             <Route
               path="/"
-              element={
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                </div>
-              }
+              element={<ClientTicketView />}
             />
             <Route path="/booking-success" element={<BookingSuccess />} />
             <Route path="/purchase-ticket/:concertId" element={<BookingPage />} />
