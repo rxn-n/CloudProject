@@ -34,7 +34,6 @@ export function BookingPage() {
   
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
     try {
       const response = await fetch(
         'https://tj70f44eok.execute-api.us-east-1.amazonaws.com/default/updateTicketCountLambda', // Your API endpoint
@@ -56,6 +55,10 @@ export function BookingPage() {
       if (!concert) {
         setError("Concert details not found.");
         return;
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to update ticket quantity');
       }
   
       // Handle success (e.g., show a success message or redirect to another page)
