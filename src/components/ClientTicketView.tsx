@@ -1,13 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Ticket as TicketIcon,
-  Calendar,
-  MapPin,
-  Music2,
-  Users,
-  Star,
-} from "lucide-react";
+import { Ticket as TicketIcon, Calendar, MapPin, Music2, Users, Star } from "lucide-react";
 
 interface Concert {
   concertId: string;
@@ -30,14 +23,10 @@ interface TicketCategory {
 export function ClientTicketView() {
   const navigate = useNavigate();
   const [concerts, setConcerts] = React.useState<Concert[]>([]);
-  const [ticketCategories, setTicketCategories] = React.useState<
-    TicketCategory[]
-  >([]);
+  const [ticketCategories, setTicketCategories] = React.useState<TicketCategory[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
-  const [expandedConcerts, setExpandedConcerts] = React.useState<Set<string>>(
-    new Set()
-  );
+  const [expandedConcerts, setExpandedConcerts] = React.useState<Set<string>>(new Set());
 
   // Fetch concert details
   React.useEffect(() => {
@@ -96,7 +85,7 @@ export function ClientTicketView() {
   };
 
   const handleBuyTickets = (concertId: string) => {
-    // Navigate to the QueueLanding page and pass the concertId as state
+    // Navigate to the queue page and pass the concertId as state
     navigate("/queue", { state: { concertId } });
   };
 

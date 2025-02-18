@@ -30,9 +30,40 @@ export function BookingPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = React.useState<string>('');
   const [numberOfTickets, setNumberOfTickets] = React.useState<number>(1);
+  
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(
+        'https://your-api-endpoint/updateTicketQuantity', // Your API endpoint
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            concertId,
+            selectedCategory,
+            numberOfTickets,
+          }),
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error('Failed to update ticket quantity');
+      }
+  
+      // Handle success (e.g., show a success message or redirect to another page)
+    } catch (err) {
+      console.error(err);
+      setError('Failed to process the booking.');
+    }
+  };
 
   // Fetch concert details and ticket categories using concertId from the URL
   React.useEffect(() => {
+    
     const fetchConcertAndTicketDetails = async () => {
       try {
         // Fetch concert details
@@ -127,7 +158,7 @@ export function BookingPage() {
             {/* Booking Form */}
             <div className="md:w-2/3 p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Complete Your Booking</h3>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>

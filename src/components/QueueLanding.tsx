@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Users, Ticket as TicketIcon, Loader2 } from 'lucide-react';
 
 interface QueueLandingProps {
@@ -7,10 +7,14 @@ interface QueueLandingProps {
 }
 
 export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
+  const location = useLocation();
   const navigate = useNavigate();
   const [position, setPosition] = useState<number | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [ws, setWs] = useState<WebSocket | null>(null);
+
+  // Get the concertId from the navigation state
+  const concertId = location.state?.concertId;
 
   // Establish WebSocket connection when the component mounts
   useEffect(() => {
@@ -26,6 +30,7 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
       websocket.send(
         JSON.stringify({
           action: 'purchaseTicket',
+          concertId,
         })
       );
     };
@@ -36,12 +41,12 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
       if (data.position !== undefined) {
         setPosition(data.position);
 
-        // Redirect to the booking page when the position reaches 0
+        // Redirect to the purchase-ticket page when the position reaches 0
         if (data.position === 0) {
           setIsRedirecting(true);
           setTimeout(() => {
             onQueueComplete(); // Call the onQueueComplete callback
-            navigate('/booking'); // Navigate to the booking page
+            navigate(`/purchase-ticket/${concertId}`); // Navigate to the purchase-ticket page
           }, 2000); // Delay for a smooth transition
         }
       }
@@ -59,7 +64,7 @@ export function QueueLanding({ onQueueComplete }: QueueLandingProps) {
     return () => {
       websocket.close();
     };
-  }, [navigate, onQueueComplete]);
+  }, [concertId, navigate, onQueueComplete]);
 
   const progressPercentage = position !== null ? Math.max(0, Math.min(100, ((position - 1) / position) * 100)) : 0;
 
