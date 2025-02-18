@@ -31,34 +31,39 @@ export function BookingPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = React.useState<string>('');
   const [numberOfTickets, setNumberOfTickets] = React.useState<number>(1);
-  
+
 
   const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!concert) {
+      setError("Concert details not found.");
+      return;
+    }
+
     try {
       const response = await fetch(
-        'https://tj70f44eok.execute-api.us-east-1.amazonaws.com/default/updateTicketCountLambda', // Your API endpoint
+        "https://tj70f44eok.execute-api.us-east-1.amazonaws.com/default/updateTicketCountLambda",
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             body: JSON.stringify({
-              concertId: concertId, // Using the concertId from the URL
-              selectedCategory: selectedCategory, // Selected category from the form
-              numberOfTickets: numberOfTickets, // Number of tickets user is purchasing
+              concertId: concert.concertId, // Use concert from state
+              selectedCategory: selectedCategory,
+              numberOfTickets: numberOfTickets,
             }),
           }),
         }
       );
-      
-      if (!concert) {
-        setError("Concert details not found.");
-        return;
+
+      if (!response.ok) {
+        throw new Error("Failed to update ticket quantity");
       }
-  
-      // Handle success (e.g., show a success message or redirect to another page)
-      alert('Tickets booked successfully!');
+
+      // Navigate with concert details
       navigate("/booking-success", {
         state: {
           concertName: concert.concertName,
@@ -69,51 +74,51 @@ export function BookingPage() {
           numberOfTickets: numberOfTickets,
           totalCost: totalCost.toFixed(2),
         },
-      }); 
+      });
 
     } catch (err) {
       console.error(err);
-      setError('Failed to process the booking.');
+      setError("Failed to process the booking.");
     }
   };
-  
+
+
 
   // Fetch concert details and ticket categories using concertId from the URL
   React.useEffect(() => {
-    
     const fetchConcertAndTicketDetails = async () => {
       try {
-        // Fetch concert details
         const concertResponse = await fetch(
-          `https://3t4o14o7s6.execute-api.us-east-1.amazonaws.com/default/getConcertDetailsLambda`
+          "https://3t4o14o7s6.execute-api.us-east-1.amazonaws.com/default/getConcertDetailsLambda"
         );
         if (!concertResponse.ok) {
-          throw new Error('Failed to fetch concert data');
+          throw new Error("Failed to fetch concert data");
         }
         const concertData: Concert[] = await concertResponse.json();
         const selectedConcert = concertData.find(concert => concert.concertId === concertId);
+
         if (!selectedConcert) {
-          throw new Error('Concert not found.');
+          throw new Error("Concert not found.");
         }
+
+        console.log("Concert Data Fetched:", selectedConcert); // Debugging log
         setConcert(selectedConcert);
 
-        // Fetch ticket details
         const ticketResponse = await fetch(
-          `https://mzc9mihhb6.execute-api.us-east-1.amazonaws.com/default/getTicketDetailsLambda`
+          "https://mzc9mihhb6.execute-api.us-east-1.amazonaws.com/default/getTicketDetailsLambda"
         );
         if (!ticketResponse.ok) {
-          throw new Error('Failed to fetch ticket data');
+          throw new Error("Failed to fetch ticket data");
         }
         const ticketData: TicketCategory[] = await ticketResponse.json();
         const filteredTicketCategories = ticketData.filter(ticket => ticket.concertId === concertId);
         setTicketCategories(filteredTicketCategories);
 
-        // Set the default selected category to the first available category
         if (filteredTicketCategories.length > 0) {
           setSelectedCategory(filteredTicketCategories[0].category);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred.');
+        setError(err instanceof Error ? err.message : "An error occurred.");
         console.error(err);
       } finally {
         setLoading(false);
@@ -122,6 +127,7 @@ export function BookingPage() {
 
     fetchConcertAndTicketDetails();
   }, [concertId]);
+
 
   // Calculate the total cost
   const selectedTicket = ticketCategories.find(ticket => ticket.category === selectedCategory);
