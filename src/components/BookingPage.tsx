@@ -5,10 +5,10 @@ export function BookingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <button className="flex items-center text-indigo-600 hover:text-indigo-700 mb-8 group">
+        <a className="flex items-center text-indigo-600 hover:text-indigo-700 mb-8 group" href='/'>
           <ArrowLeft className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" />
           Back to Tickets
-        </button>
+        </a>
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="md:flex">
