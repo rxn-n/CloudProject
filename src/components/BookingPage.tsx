@@ -36,12 +36,12 @@ export function BookingPage() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-  
+
     if (!concert) {
       setError("Concert details not found.");
       return;
     }
-  
+
     try {
       // Prepare the email payload
       const emailPayload = {
@@ -54,10 +54,15 @@ export function BookingPage() {
           venue: concert.venue,
           category: selectedCategory,
           quantity: numberOfTickets,
-          totalPrice: totalCost,
+          totalPrice: totalCost.toFixed(2), // Ensure totalPrice is formatted as a string with 2 decimal places
         },
       };
-  
+
+      // Convert the payload into the required format
+      const formattedPayload = {
+        body: JSON.stringify(emailPayload),
+      };
+
       // Call the API Gateway endpoint to send the email
       const emailResponse = await fetch(
         "https://r7tnv5efu0.execute-api.us-east-1.amazonaws.com/default/ReceiptEmailLambda",
@@ -66,24 +71,24 @@ export function BookingPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(emailPayload),
+          body: JSON.stringify(formattedPayload),
         }
       );
-      
+
       if (!emailResponse.ok) {
         const errorDetails = await emailResponse.text();
         console.error("Failed to send email:", errorDetails);
         setError("Failed to send confirmation email.");
         return;
       }
-  
+
       // Prepare the ticket update payload
       const updatePayload = {
         concertId: concert.concertId,
         selectedCategory: selectedCategory,
         numberOfTickets: numberOfTickets,
       };
-  
+
       // Update ticket quantity (existing logic)
       const updateResponse = await fetch(
         "https://tj70f44eok.execute-api.us-east-1.amazonaws.com/default/updateTicketCountLambda",
@@ -95,34 +100,34 @@ export function BookingPage() {
           body: JSON.stringify({ body: JSON.stringify(updatePayload) }),
         }
       );
-  
+
       if (!updateResponse.ok) {
         throw new Error("Failed to update ticket quantity");
       }
 
       // Step 1: Generate ticket UUIDs and store them in DynamoDB
-    const ticketResponse = await fetch(
-      "https://ur280zyt0i.execute-api.us-east-1.amazonaws.com/default/ticketReceipts",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email, // User's email
-          num_tickets: numberOfTickets, // Number of tickets to generate
-        }),
+      const ticketResponse = await fetch(
+        "https://ur280zyt0i.execute-api.us-east-1.amazonaws.com/default/ticketReceipts",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email, // User's email
+            num_tickets: numberOfTickets, // Number of tickets to generate
+          }),
+        }
+      );
+
+      if (!ticketResponse.ok) {
+        throw new Error("Failed to generate tickets.");
       }
-    );
 
-    if (!ticketResponse.ok) {
-      throw new Error("Failed to generate tickets.");
-    }
+      const ticketData = await ticketResponse.json();
+      console.log("Tickets generated:", ticketData.tickets); // Debugging log
 
-    const ticketData = await ticketResponse.json();
-    console.log("Tickets generated:", ticketData.tickets); // Debugging log
 
-  
       // Navigate to the booking success page
       navigate("/booking-success", {
         state: {
